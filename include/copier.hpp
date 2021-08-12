@@ -13,12 +13,32 @@
 #include <filesystem>
 
 using namespace std;
-using namespace filesystem;
+using namespace std::filesystem;
 
 class Copier {
 public:
-    int processPathAndCopy(const path & sourcePath, const path & destPath);
-    int copyFile(const string & source, const string & dest);
+    /**
+     * @brief Copy binary file.
+     * @param sourcePath path to source file
+     * @param destPath path to destination file
+     *
+     */
+    int copyBinaryFile(const path& sourcePath, const path& destPath);
+    
+    /**
+     *@brief Copy text file.
+     *@param sourcePath path to source file
+     *@param destPath path to destination file
+     */
+    int copyTextFile(const path& sourcePath, const path& destPath);
+    
+    /**
+     *@brief Process path to files and directory, then try to copy files in following.
+     *@param sourcePath path to source file
+     *@param destPath path to destination file
+     *@param binary True to copy in binary mode.  False to do in text mode.
+     */
+    int processPathAndCopy(const path & sourcePath, const path & destPath, bool binary);
 };
 
 #endif /* copier_hpp */

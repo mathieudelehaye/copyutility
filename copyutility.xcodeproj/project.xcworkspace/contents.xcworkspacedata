@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <Group
-      location = "group:../include"
-      name = "include">
-      <FileRef
-         location = "group:copier.hpp">
-      </FileRef>
-   </Group>
-   <FileRef
-      location = "group:../main.cpp">
-   </FileRef>
-   <Group
-      location = "group:../src"
-      name = "src">
-      <FileRef
-         location = "group:copier.cpp">
-      </FileRef>
-   </Group>
    <FileRef
       location = "self:">
    </FileRef>

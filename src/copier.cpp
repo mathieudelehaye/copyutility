@@ -10,7 +10,7 @@
 #include <fstream>
 #include <algorithm>
 
-int Copier::copyFile(const string & source, const string & dest) {
+int Copier::copyBinaryFile(const path& sourcePath, const path& destPath) {
     
     int ret = 0;
    
@@ -21,10 +21,10 @@ int Copier::copyFile(const string & source, const string & dest) {
     // Open files
     // Input
     if(!ret) {
-        input.open(source, ios::binary | ios::in);
+        input.open(sourcePath, ios::binary | ios::in);
         
         if(!input) {
-            cout<<"Source file cannot be opened: "<<source<<endl;
+            cout<<"Source file cannot be opened: "<<sourcePath<<endl;
             ret = -2;
         }
     }
@@ -32,15 +32,15 @@ int Copier::copyFile(const string & source, const string & dest) {
     // Check if output already exists
     if (!ret) {
         
-        if(exists(dest)) {
-            cout<<dest<<" already exists and cannot be overwritten.  Stopping."<<endl;
+        if(exists(destPath)) {
+            cout<<destPath<<" already exists and cannot be overwritten.  Stopping."<<endl;
             ret = -3;
         }
     }
     
     // Output
     if(!ret) {
-        output.open(dest, ios::binary | ios::out);
+        output.open(destPath, ios::binary | ios::out);
         
         if(!output) {
             cout<<"Destination file cannot be opened."<<endl;
@@ -50,13 +50,13 @@ int Copier::copyFile(const string & source, const string & dest) {
     
     // Copy file
     if(!ret) {
-        cout<<"Copying "<<source;
+        cout<<"Copying "<<sourcePath;
         
         const uint16_t buffSize = 100;
         char buffer[buffSize];
         
         uint32_t copiedBytes = 0;
-        uint32_t totalBytesToCopy = static_cast<uint32_t>(file_size(source));
+        uint32_t totalBytesToCopy = static_cast<uint32_t>(file_size(sourcePath));
         
         while(copiedBytes < totalBytesToCopy) {
             
@@ -81,7 +81,33 @@ int Copier::copyFile(const string & source, const string & dest) {
     return ret;
 }
 
-int Copier::processPathAndCopy(const filesystem::path & sourcePath, const filesystem::path & destPath) {
+int Copier::copyTextFile(const filesystem::path & sourcePath, const filesystem::path & destPath) {
+    
+    int ret = 0;
+    
+    ifstream input{ sourcePath };
+    if (!input) {
+        cout << "Source file not found" << endl;
+        ret = -1;
+    }
+    
+    if(!ret) {
+        ofstream output{ destPath };
+
+        string line;
+
+        while (getline(input, line)) {
+            output << line << endl;
+        }
+        
+        input.close();
+        output.close();
+    }
+    
+    return ret;
+}
+
+int Copier::processPathAndCopy(const filesystem::path & sourcePath, const filesystem::path & destPath, bool binary) {
         
     int ret = 0;
             
@@ -129,19 +155,19 @@ int Copier::processPathAndCopy(const filesystem::path & sourcePath, const filesy
                 
                 for(auto const& dirEntry: directory_iterator{p1}) {
                     if (dirEntry.is_regular_file()) {
-                        copyFile(dirEntry.path(), destPath / dirEntry.path().filename());
+                        binary ? copyBinaryFile(sourcePath, destPath) : copyTextFile(sourcePath, destPath);
                         
                     }
                 }
             } else {
                 // copy file to directory
-                copyFile(sourcePath, destPath / sourcePath.filename());
+                binary ? copyBinaryFile(sourcePath, destPath) : copyTextFile(sourcePath, destPath);
             }
         } else {
             // copy to file
             if (!isSourceDir) {
                 // copy file
-                copyFile(sourcePath, destPath);
+                binary ? copyBinaryFile(sourcePath, destPath) : copyTextFile(sourcePath, destPath);
             }
         }
     }

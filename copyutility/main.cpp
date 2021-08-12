@@ -25,5 +25,5 @@ int main(int argc, const char * argv[]) {
         sourcePath = argv[2];
     }
     
-    return copier.processPathAndCopy(sourcePath, destPath);
+    return copier.processPathAndCopy(sourcePath, destPath, true);
 }
